@@ -17,7 +17,7 @@ namespace Dataverse.DataProviders.Tests
         {
             /*
              * The test creates a list of accounts and filters them where:
-             *  Name contains LLC and
+             *  Name ends with LLC and
              *      Can be faxed and has fax number, or
              *      Can be phoned and has phone number, or
              *      Can be e-mailed and has e-mail.
