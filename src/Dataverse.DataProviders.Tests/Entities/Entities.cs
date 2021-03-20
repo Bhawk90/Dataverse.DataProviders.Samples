@@ -292,7 +292,27 @@ namespace CrmEarlyBound
 				this.OnPropertyChanged("Telephone1");
 			}
 		}
-		
+
+		/// <summary>
+		/// Preferred Method of Contact
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("preferredcontactmethodcode")]
+		public Account_PreferredContactMethodCode preferredcontactmethodcode
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<Account_PreferredContactMethodCode>("preferredcontactmethodcode");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.OnPropertyChanging("preferredcontactmethodcode");
+				this.SetAttributeValue("preferredcontactmethodcode", value);
+				this.OnPropertyChanged("preferredcontactmethodcode");
+			}
+		}
+
 		/// <summary>
 		/// Constructor for populating via LINQ queries given a LINQ anonymous type
 		/// <param name="anonymousType">LINQ anonymous type.</param>

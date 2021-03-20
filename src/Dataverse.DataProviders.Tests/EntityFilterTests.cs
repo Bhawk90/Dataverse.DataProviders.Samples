@@ -12,6 +12,10 @@ namespace Dataverse.DataProviders.Tests
     [TestClass]
     public class EntityFilterTests
     {
+
+        /// <summary>
+        /// Test for filtering by using text and boolean fields with more complex, grouped conditions.
+        /// </summary>
         [TestMethod]
         public void EntityFilter_FilterByComplex_ReturnsFilteredList()
         {
@@ -72,6 +76,74 @@ namespace Dataverse.DataProviders.Tests
         }
 
         /// <summary>
+        /// Test for filtering by using text fields and simple conditions.
+        /// </summary>
+        [TestMethod]
+        public void EntityFilter_FilterByName_ReturnsFilteredList()
+        {
+            // Create source entity list
+            var accounts = GetAccountList();
+
+            // Define queries to be appled on source
+            var queryExpression = new QueryExpression();
+            queryExpression.Criteria.AddCondition("name", ConditionOperator.EndsWith, "LLC");
+
+            // Apply filters on entity list
+            IEntityFilter<Account> entityFilter = new EntityFilter<Account>();
+            var filteredResults = entityFilter.FilterBy(accounts, queryExpression);
+
+            Assert.IsTrue(
+                filteredResults.All(a =>
+                    a.name.EndsWith("LLC")
+                )
+            );
+        }
+
+        /// <summary>
+        /// Test for filtering by using OptionSet fields and simple conditions.
+        /// </summary>
+        [TestMethod]
+        public void EntityFilter_FilterByOptionSet_ReturnsFilteredList()
+        {
+            // Create source entity list
+            var accounts = GetAccountList();
+
+            // Define queries to be appled on source
+            var queryExpression = new QueryExpression();
+            queryExpression.Criteria.AddCondition("preferredcontactmethodcode", ConditionOperator.In, Account_PreferredContactMethodCode.Email, Account_PreferredContactMethodCode.Phone);
+
+            // Apply filters on entity list
+            IEntityFilter<Account> entityFilter = new EntityFilter<Account>();
+            var filteredResults = entityFilter.FilterBy(accounts, queryExpression);
+
+            Assert.IsTrue(
+                filteredResults.All(a =>
+                    a.preferredcontactmethodcode == Account_PreferredContactMethodCode.Email ||
+                    a.preferredcontactmethodcode == Account_PreferredContactMethodCode.Phone
+                )
+            );
+        }
+
+        /// <summary>
+        /// Test for filtering by empty filter.
+        /// </summary>
+        [TestMethod]
+        public void EntityFilter_EmptyFilter_ReturnsOriginalList()
+        {
+            // Create source entity list
+            var accounts = GetAccountList();
+
+            // Define queries to be appled on source
+            var queryExpression = new QueryExpression();
+
+            // Apply filters on entity list
+            IEntityFilter<Account> entityFilter = new EntityFilter<Account>();
+            var filteredResults = entityFilter.FilterBy(accounts, queryExpression);
+
+            Assert.AreEqual(accounts.Count, filteredResults.Count);
+        }
+
+        /// <summary>
         /// Returns a list of fake accounts.
         /// </summary>
         /// <returns></returns>
@@ -87,7 +159,8 @@ namespace Dataverse.DataProviders.Tests
                 .RuleFor(a => a.fax, f => f.Phone.PhoneNumber())
                 .RuleFor(a => a.donotemail, f => f.Random.Bool())
                 .RuleFor(a => a.donotfax, f => f.Random.Bool())
-                .RuleFor(a => a.donotphone, f => f.Random.Bool());
+                .RuleFor(a => a.donotphone, f => f.Random.Bool())
+                .RuleFor(a => a.preferredcontactmethodcode, f => f.PickRandom<Account_PreferredContactMethodCode>());
 
             return accountFaker.Generate(100);
         }
